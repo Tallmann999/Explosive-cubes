@@ -1,25 +1,38 @@
+using System;
 using UnityEngine;
-using UnityEngine.UIElements;
+using Random = UnityEngine.Random;
 
+[RequireComponent(typeof(Rigidbody))]
 public class MutableObject : MonoBehaviour
 {
+    private GameObject[] _gameObject;
 
-// У каждого нового куба Scale уменьшен в два раза по всем осям относительно того куба, на который нажал пользователь.
-// Цвет каждого куба определяется случайным образом.
-// На каждый куб действует сила гравитации.
+    //private void Start()
+    //{
+    //}
 
-//Добавить взрывную силу из центра исчезнувшего куба, которая разбросает только созданные им объекты.
-//Сделать невидимые ограждения, чтобы кубики далеко не разлетались
-
- 
-     void Start()
+    public  void HandleClick()
     {
-        
+        int randomValue = Random.Range(2,6);
+
+        for (int i = 0; i < randomValue; i++)
+        {
+            _gameObject[i]= Instantiate(_gameObject[i], CreateRandomPosition(), Quaternion.identity);
+        }
+
+        //CreateRandomColor();
+        //CreateRandomPosition();
+        SetDownSize();
     }
 
-    // Update is called once per frame
-    void Update()
+    private Vector3 CreateRandomPosition()
     {
-        
+        int randomValue = Random.Range(-15, 15);
+        return new Vector3(randomValue, randomValue, randomValue);
+    }
+
+    private void SetDownSize()
+    {
+       
     }
 }
