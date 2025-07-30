@@ -5,34 +5,32 @@ using Random = UnityEngine.Random;
 [RequireComponent(typeof(Rigidbody))]
 public class MutableObject : MonoBehaviour
 {
-    private GameObject[] _gameObject;
+    [SerializeField] private Color _mColor = Color.white;
+ 
+    private Renderer _renderer;
+    private Rigidbody _rigidbody;
 
-    //private void Start()
-    //{
-    //}
-
-    public  void HandleClick()
+    private void Awake()
     {
-        int randomValue = Random.Range(2,6);
+        _renderer = GetComponent<Renderer>();
+        _rigidbody = GetComponent<Rigidbody>();
+    }
 
-        for (int i = 0; i < randomValue; i++)
+    public void SetDownSize(Transform targetTransform)
+    {
+        transform.localScale = targetTransform.localScale * 0.5f; // Уменьшаем в 2 раза
+    }
+
+    public void CreateRandomColor()
+    {
+        if (_renderer != null)
         {
-            _gameObject[i]= Instantiate(_gameObject[i], CreateRandomPosition(), Quaternion.identity);
+            _mColor = new Color(
+                Random.Range(0f, 1f),
+                Random.Range(0f, 1f),
+                Random.Range(0f, 1f)
+            );
+            _renderer.material.color = _mColor;
         }
-
-        //CreateRandomColor();
-        //CreateRandomPosition();
-        SetDownSize();
-    }
-
-    private Vector3 CreateRandomPosition()
-    {
-        int randomValue = Random.Range(-15, 15);
-        return new Vector3(randomValue, randomValue, randomValue);
-    }
-
-    private void SetDownSize()
-    {
-       
     }
 }
