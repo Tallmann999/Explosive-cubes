@@ -1,30 +1,29 @@
+using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
+[RequireComponent(typeof(InputReader))]
 public class Spawner : MonoBehaviour
 {
+    [Header("Spawn Settings")]
     [SerializeField] private InputReader _inputReader;
-    //[SerializeField] private float _explosionForce = 10f;
-    //[SerializeField] private float _explosionRadius = 5f;
-    //[SerializeField] private float _boundarySize = 20f;
     [SerializeField] private GameObject _prefab;
-  
-    [SerializeField] private Camera _camera;
+    [SerializeField] private float _explosionForce = 500f;
+    [SerializeField] private float _explosionRadius = 5f;
+    [SerializeField] private float _upwardModifier = 2f;
 
-    private void OnEnable()
-    {
-        _inputReader.Cliked += OnClick;
-    }
+    private List<GameObject> _spawnedObjects = new List<GameObject>();
 
-    private void OnDisable()
-    {
-        _inputReader.Cliked -= OnClick;
-    }
+    private void OnEnable() => _inputReader.Cliked += OnClick;
+    private void OnDisable() => _inputReader.Cliked -= OnClick;
 
     private void OnClick()
     {
-        Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
-        Debug.DrawRay(_camera.transform.position, ray.direction, Color.red);
+        float startValue = 0f;
+        float halfValue = 0.5f;
+        float maxValue = 1f;
+        int percent = 100;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
@@ -34,16 +33,16 @@ public class Spawner : MonoBehaviour
             {
                 foreach (Generator generator in generators)
                 {
-                    // Проверяем шанс разделения
-                    if (Random.Range(0f, 1f) <= generator.CurrentChance)
-                    {
-                        // Успех - создаём новые объекты
-                        CreateMutableObject(generator.transform);
-                        
-                        // Уменьшаем шанс для следующего раза
-                        generator.CurrentChance *= 0.5f;
+                    _spawnedObjects.Clear();
+                    Vector3 explosionCenter = generator.transform.position;
 
-                        Debug.Log($"Разделение успешно! Новый шанс: {generator.CurrentChance * 100}%");
+                    if (Random.Range(startValue, maxValue) <= generator.CurrentChance)
+                    {
+                        CreateMutableObjects(generator.transform);
+                        generator.CurrentChance *= halfValue;
+
+                        ApplyExplosionForce(explosionCenter);
+                        Debug.Log($"Разделение успешно! Новый шанс: {generator.CurrentChance * percent}%");
                     }
                     else
                     {
@@ -55,54 +54,44 @@ public class Spawner : MonoBehaviour
             }
         }
     }
-    //private void OnClick()
-    //{
-    //    Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
-    //    Debug.DrawRay(_camera.transform.position, ray.direction, Color.red);
 
-    //    if (Physics.Raycast(ray, out RaycastHit hit))
-    //    {
-    //        Generator[] generators = hit.collider.GetComponents<Generator>();
-
-    //        if (generators.Length > 0)
-    //        {
-    //            foreach (Generator generator in generators)
-    //            {
-    //                CreateMutableObject(generator.transform); 
-    //            }
-
-    //            foreach (Generator generator in generators)
-    //            {
-    //                Destroy(generator.gameObject); 
-    //            }
-    //        }
-    //    }
-    //}
-
-    private void CreateMutableObject(Transform generatorTransform)
+    private void CreateMutableObjects(Transform generatorTransform)
     {
-        int minValue = 2;
-        int maxValue = 7;
-        int randomValue = Random.Range(minValue, maxValue); 
+        float startValue = 0f;
+        float halfValue = 0.5f;
+        float negativeValue = -1f;
+        float positiveValue = 1f;
 
-        for (int i = 0; i < randomValue; i++)
+        int minValue = 2;
+        int maxValue = 6;
+        int count = Random.Range(minValue, maxValue);
+        Vector3 center = generatorTransform.position;
+
+        for (int i = 0; i < count; i++)
         {
-            GameObject newObject = Instantiate(_prefab, CreateRandomPosition(), Quaternion.identity);
+            Vector3 randomOffset = new Vector3(Random.Range(negativeValue, positiveValue),
+                Random.Range(startValue, positiveValue), Random.Range(negativeValue, positiveValue)).normalized * halfValue;
+
+            GameObject newObject = Instantiate(_prefab, center + randomOffset, Random.rotation);
+            _spawnedObjects.Add(newObject);
             MutableObject currentObject = newObject.GetComponent<MutableObject>();
 
             if (currentObject != null)
             {
-                currentObject.SetDownSize(generatorTransform);
-                currentObject.CreateRandomColor();
+                currentObject.Initialize(generatorTransform);
             }
         }
     }
 
-    private Vector3 CreateRandomPosition()
+    private void ApplyExplosionForce(Vector3 explosionCenter)
     {
-        int minvalue = -15;
-        int maxvalue = 15;
-        int randomValue = Random.Range(minvalue, maxvalue);
-        return new Vector3(randomValue, randomValue, randomValue);
+        foreach (GameObject obj in _spawnedObjects)
+        {
+            MutableObject mutable = obj.GetComponent<MutableObject>();
+            if (mutable != null)
+            {
+                mutable.ApplyExplosionForce(explosionCenter, _explosionForce, _explosionRadius, _upwardModifier);
+            }
+        }
     }
 }

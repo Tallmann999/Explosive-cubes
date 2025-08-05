@@ -9,7 +9,6 @@ public class InputReader : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Debug.Log("Я нажимаю на кнопку");
             Cliked?.Invoke();
         }
     }
