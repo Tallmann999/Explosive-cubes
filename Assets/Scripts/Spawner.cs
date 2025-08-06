@@ -2,69 +2,72 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-[RequireComponent(typeof(InputReader))]
+[RequireComponent(typeof(ExplosionCube))]
+[RequireComponent(typeof(RaycastHandler))]
 public class Spawner : MonoBehaviour
 {
-    [Header("Spawn Settings")]
-    [SerializeField] private InputReader _inputReader;
     [SerializeField] private Cube _prefab;
-    [SerializeField] private float _explosionForce = 500f;
-    [SerializeField] private float _explosionRadius = 5f;
-    [SerializeField] private float _upwardModifier = 2f;
+    [SerializeField] private StartCube _startCube;
+    [SerializeField] private ExplosionCube _explosion;
+    [SerializeField] private RaycastHandler _raycastHandler;
 
     private List<Cube> _spawnedObjects = new List<Cube>();
+    private Vector3 _exsplosionCenter;
 
-    private void OnEnable() => _inputReader.Cliked += OnClick;
-    private void OnDisable() => _inputReader.Cliked -= OnClick;
+    private void OnEnable() => _raycastHandler.HitDetected += OnHandleHit;
 
-    private void OnClick()
+    private void Awake()
+    {
+        _explosion = GetComponent<ExplosionCube>();
+        _raycastHandler = GetComponent<RaycastHandler>();
+    }
+
+    private void OnDisable() => _raycastHandler.HitDetected -= OnHandleHit;
+
+    private void OnHandleHit(RaycastHit hit)
+    {
+        _startCube = hit.collider.GetComponent<StartCube>();
+
+        if (_startCube == null)
+            return;
+
+        _exsplosionCenter = _startCube.transform.position;
+        ProcessCubeGeneration(_startCube, _exsplosionCenter);
+    }
+
+    private void ProcessCubeGeneration(StartCube generator, Vector3 explosionCenter)
     {
         float startValue = 0f;
         float halfValue = 0.5f;
         float maxValue = 1f;
         int percent = 100;
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-        if (Physics.Raycast(ray, out RaycastHit hit))
+        if (Random.Range(startValue, maxValue) <= generator.CurrentChance)
         {
-            Cube[] generators = hit.collider.GetComponents<Cube>();
-
-            if (generators.Length > 0)
-            {
-                foreach (Cube generator in generators)
-                {
-                    _spawnedObjects.Clear();
-                    Vector3 explosionCenter = generator.transform.position;
-
-                    if (Random.Range(startValue, maxValue) <= _prefab.CurrentChance)
-                    {
-                        CreateMutableObjects(generator.transform);
-                        _prefab.CurrentChance *= halfValue;
-
-                        ApplyExplosionForce(explosionCenter);
-                        Debug.Log($"Разделение успешно! Новый шанс: {_prefab.CurrentChance * percent}%");
-                    }
-                    else
-                    {
-                        Debug.Log("Разделение не произошло");
-                    }
-
-                    Destroy(generator.gameObject);
-                }
-            }
+            CreateCubes(generator.transform);
+            generator.CurrentChance *= halfValue;
+            _explosion.ApplyExplosion(_exsplosionCenter, _spawnedObjects);
+            Debug.Log($"Разделение получилось: {generator.CurrentChance * percent}%");
         }
+        else
+        {
+            Debug.Log("Разделение не получилось!!");
+        }
+
+        Destroy(generator.gameObject);
+        _spawnedObjects.Clear();
     }
 
-    private void CreateMutableObjects(Transform generatorTransform)
+    private void CreateCubes(Transform generatorTransform)
     {
         float startValue = 0f;
         float halfValue = 0.5f;
         float negativeValue = -1f;
         float positiveValue = 1f;
-
         int minValue = 2;
         int maxValue = 6;
         int count = Random.Range(minValue, maxValue);
+
         Vector3 center = generatorTransform.position;
 
         for (int i = 0; i < count; i++)
@@ -79,19 +82,6 @@ public class Spawner : MonoBehaviour
             if (currentObject != null)
             {
                 currentObject.Initialize(generatorTransform);
-            }
-        }
-    }
-
-    private void ApplyExplosionForce(Vector3 explosionCenter)
-    {
-        foreach (Cube obj in _spawnedObjects)
-        {
-            Cube mutable = obj.GetComponent<Cube>();
-
-            if (mutable != null)
-            {
-                mutable.ApplyExplosionForce(explosionCenter, _explosionForce, _explosionRadius, _upwardModifier);
             }
         }
     }
