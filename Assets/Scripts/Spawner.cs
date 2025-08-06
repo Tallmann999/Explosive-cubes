@@ -7,12 +7,12 @@ public class Spawner : MonoBehaviour
 {
     [Header("Spawn Settings")]
     [SerializeField] private InputReader _inputReader;
-    [SerializeField] private GameObject _prefab;
+    [SerializeField] private Cube _prefab;
     [SerializeField] private float _explosionForce = 500f;
     [SerializeField] private float _explosionRadius = 5f;
     [SerializeField] private float _upwardModifier = 2f;
 
-    private List<GameObject> _spawnedObjects = new List<GameObject>();
+    private List<Cube> _spawnedObjects = new List<Cube>();
 
     private void OnEnable() => _inputReader.Cliked += OnClick;
     private void OnDisable() => _inputReader.Cliked -= OnClick;
@@ -27,22 +27,22 @@ public class Spawner : MonoBehaviour
 
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            Generator[] generators = hit.collider.GetComponents<Generator>();
+            Cube[] generators = hit.collider.GetComponents<Cube>();
 
             if (generators.Length > 0)
             {
-                foreach (Generator generator in generators)
+                foreach (Cube generator in generators)
                 {
                     _spawnedObjects.Clear();
                     Vector3 explosionCenter = generator.transform.position;
 
-                    if (Random.Range(startValue, maxValue) <= generator.CurrentChance)
+                    if (Random.Range(startValue, maxValue) <= _prefab.CurrentChance)
                     {
                         CreateMutableObjects(generator.transform);
-                        generator.CurrentChance *= halfValue;
+                        _prefab.CurrentChance *= halfValue;
 
                         ApplyExplosionForce(explosionCenter);
-                        Debug.Log($"Разделение успешно! Новый шанс: {generator.CurrentChance * percent}%");
+                        Debug.Log($"Разделение успешно! Новый шанс: {_prefab.CurrentChance * percent}%");
                     }
                     else
                     {
@@ -72,9 +72,9 @@ public class Spawner : MonoBehaviour
             Vector3 randomOffset = new Vector3(Random.Range(negativeValue, positiveValue),
                 Random.Range(startValue, positiveValue), Random.Range(negativeValue, positiveValue)).normalized * halfValue;
 
-            GameObject newObject = Instantiate(_prefab, center + randomOffset, Random.rotation);
+            Cube newObject = Instantiate(_prefab, center + randomOffset, Random.rotation);
             _spawnedObjects.Add(newObject);
-            MutableObject currentObject = newObject.GetComponent<MutableObject>();
+            Cube currentObject = newObject.GetComponent<Cube>();
 
             if (currentObject != null)
             {
@@ -85,9 +85,10 @@ public class Spawner : MonoBehaviour
 
     private void ApplyExplosionForce(Vector3 explosionCenter)
     {
-        foreach (GameObject obj in _spawnedObjects)
+        foreach (Cube obj in _spawnedObjects)
         {
-            MutableObject mutable = obj.GetComponent<MutableObject>();
+            Cube mutable = obj.GetComponent<Cube>();
+
             if (mutable != null)
             {
                 mutable.ApplyExplosionForce(explosionCenter, _explosionForce, _explosionRadius, _upwardModifier);

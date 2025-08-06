@@ -3,8 +3,16 @@ using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(Renderer))]
-public class MutableObject : MonoBehaviour
+public class Cube : MonoBehaviour
 {
+    [SerializeField] private float _currentChance = 1f;
+
+    public float CurrentChance
+    {
+        get => _currentChance;
+        set => _currentChance = value;
+    }
+
     private Renderer _renderer;
     private Rigidbody _rigidbody;
 
