@@ -6,7 +6,7 @@ public class RaycastHandler : MonoBehaviour
 {
     [SerializeField] private InputReader _inputReader;
 
-    public event Action<RaycastHit> HitDetected;
+    public event Action<Cube> HitDetected;
 
     private void OnEnable() => _inputReader.Clicked += OnPerformRaycast;
 
@@ -18,7 +18,10 @@ public class RaycastHandler : MonoBehaviour
 
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            HitDetected?.Invoke(hit);
+            if (hit.collider.TryGetComponent<Cube>(out var cube))
+            {
+                HitDetected?.Invoke(cube);
+            }
         }
     }
 }

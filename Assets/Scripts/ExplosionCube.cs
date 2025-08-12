@@ -9,13 +9,15 @@ public class ExplosionCube : MonoBehaviour
 
     public void ApplyExplosion(Vector3 explosionCenter, List<Cube> spawnedObjects)
     {
+        float minvalue = 0.8f;
+        float maxValue = 1.2f;
+
         foreach (Cube spawnedObject in spawnedObjects)
         {
-            Cube mutableObject = spawnedObject.GetComponent<Cube>();
-
-            if (mutableObject != null)
+            if (spawnedObject.Rigidbody != null)
             {
-                mutableObject.ApplyExplosionForce(explosionCenter, _explosionForce, _explosionRadius, _upwardModifier);
+                spawnedObject.Rigidbody.AddExplosionForce(_explosionForce * Random.Range(minvalue, maxValue),
+                explosionCenter, _explosionRadius, _upwardModifier, ForceMode.Impulse);
             }
         }
     }

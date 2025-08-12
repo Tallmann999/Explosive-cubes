@@ -5,8 +5,17 @@ using Random = UnityEngine.Random;
 [RequireComponent(typeof(Renderer))]
 public class Cube : MonoBehaviour
 {
+    [SerializeField] private float _currentChance = 1f;
+
     private Renderer _renderer;
     private Rigidbody _rigidbody;
+
+    public Rigidbody Rigidbody => _rigidbody;
+    public float CurrentChance
+    {
+        get => _currentChance;
+        set => _currentChance = value;
+    }
 
     private void Awake()
     {
@@ -20,31 +29,24 @@ public class Cube : MonoBehaviour
         CreateRandomColor();
     }
 
-    public void ApplyExplosionForce(Vector3 explosionCenter, float force, float radius, float upwardModifier)
-    {
-        float minvalue = 0.8f;
-        float maxValue = 1.2f;
-
-        if (_rigidbody != null)
-        {
-            _rigidbody.AddExplosionForce(force * Random.Range(minvalue, maxValue),
-                explosionCenter, radius, upwardModifier, ForceMode.Impulse);
-        }
-    }
-
     private void SetDownSize(Transform parentTransform)
     {
-        transform.localScale = parentTransform.localScale * 0.5f;
+        float halfSizwValue = 0.5f;
+
+        transform.localScale = parentTransform.localScale * halfSizwValue;
     }
 
     private void CreateRandomColor()
     {
+        float minValue = 0.2f;
+        float maxValue = 1f;
+
         if (_renderer != null)
         {
             _renderer.material.color = new Color(
-                Random.Range(0.2f, 1f),
-                Random.Range(0.2f, 1f),
-                Random.Range(0.2f, 1f)
+                Random.Range(minValue, maxValue),
+                Random.Range(minValue, maxValue),
+                Random.Range(minValue, maxValue)
             );
         }
     }

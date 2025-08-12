@@ -2,40 +2,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-[RequireComponent(typeof(ExplosionCube))]
-[RequireComponent(typeof(RaycastHandler))]
 public class Spawner : MonoBehaviour
 {
     [SerializeField] private Cube _prefab;
-    [SerializeField] private StartCube _startCube;
-    [SerializeField] private ExplosionCube _explosion;
-    [SerializeField] private RaycastHandler _raycastHandler;
 
     private List<Cube> _spawnedObjects = new List<Cube>();
-    private Vector3 _exsplosionCenter;
 
-    private void OnEnable() => _raycastHandler.HitDetected += OnHandleHit;
+    public List<Cube> SpawnedObjects => _spawnedObjects;
 
-    private void Awake()
-    {
-        _explosion = GetComponent<ExplosionCube>();
-        _raycastHandler = GetComponent<RaycastHandler>();
-    }
-
-    private void OnDisable() => _raycastHandler.HitDetected -= OnHandleHit;
-
-    private void OnHandleHit(RaycastHit hit)
-    {
-        _startCube = hit.collider.GetComponent<StartCube>();
-
-        if (_startCube == null)
-            return;
-
-        _exsplosionCenter = _startCube.transform.position;
-        ProcessCubeGeneration(_startCube, _exsplosionCenter);
-    }
-
-    private void ProcessCubeGeneration(StartCube generator, Vector3 explosionCenter)
+    public void ProcessCubeGeneration(Cube generator)
     {
         float startValue = 0f;
         float halfValue = 0.5f;
@@ -46,7 +21,6 @@ public class Spawner : MonoBehaviour
         {
             CreateCubes(generator.transform);
             generator.CurrentChance *= halfValue;
-            _explosion.ApplyExplosion(_exsplosionCenter, _spawnedObjects);
             Debug.Log($"Разделение получилось: {generator.CurrentChance * percent}%");
         }
         else
@@ -55,7 +29,7 @@ public class Spawner : MonoBehaviour
         }
 
         Destroy(generator.gameObject);
-        _spawnedObjects.Clear();
+
     }
 
     private void CreateCubes(Transform generatorTransform)
@@ -69,6 +43,7 @@ public class Spawner : MonoBehaviour
         int count = Random.Range(minValue, maxValue);
 
         Vector3 center = generatorTransform.position;
+        _spawnedObjects.Clear();
 
         for (int i = 0; i < count; i++)
         {
