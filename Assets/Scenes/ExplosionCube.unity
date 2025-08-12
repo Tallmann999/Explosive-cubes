@@ -611,7 +611,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _explosionForce: 500
   _explosionRadius: 5
-  _upwardModifier: 2
+  _upwardModifier: 0
 --- !u!4 &1352358169
 Transform:
   m_ObjectHideFlags: 0
@@ -1074,6 +1074,7 @@ GameObject:
   - component: {fileID: 8159665596707570379}
   - component: {fileID: 8856254251140663325}
   - component: {fileID: 8856254251140663322}
+  - component: {fileID: 8856254251140663326}
   m_Layer: 0
   m_Name: FirstObject
   m_TagString: Untagged
@@ -1195,6 +1196,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _currentChance: 1
+--- !u!114 &8856254251140663326
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5382519002329009719}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 430a3b9a70d2c8645b8218e50395b058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -77,7 +77,7 @@ public class Spawner : MonoBehaviour
 
             Cube newObject = Instantiate(_prefab, center + randomOffset, Random.rotation);
             _spawnedObjects.Add(newObject);
-            Cube currentObject = newObject.GetComponent<Cube>();
+            Cube currentObject = newObject;
 
             if (currentObject != null)
             {
