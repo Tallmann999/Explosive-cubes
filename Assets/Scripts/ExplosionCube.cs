@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ExplosionCube : MonoBehaviour
-{    
+{
     [SerializeField] private float _baseForce = 100f;
     [SerializeField] private float _baseRadius = 5f;
     [SerializeField] private float _upwardModifier = 0.5f;
@@ -36,7 +36,7 @@ public class ExplosionCube : MonoBehaviour
     {
         float startSize = 1f;
         float distance = Vector3.Distance(explosionCenter, rigidbody.position);
-        float sizeFactor = startSize / rigidbody.transform.localScale.magnitude; 
+        float sizeFactor = startSize / rigidbody.transform.localScale.magnitude;
 
         float explosionForce = _baseForce * sizeFactor * _sizeForceMultiplier;
         float explosionRadius = _baseRadius * sizeFactor * _sizeRadiusMultiplier;
@@ -44,8 +44,8 @@ public class ExplosionCube : MonoBehaviour
         float distanceFactor = Mathf.Clamp01(1 - (distance / explosionRadius));
         explosionForce *= distanceFactor;
 
-        rigidbody.AddExplosionForce(explosionForce,explosionCenter,explosionRadius,
-            _upwardModifier,ForceMode.Impulse);
+        rigidbody.AddExplosionForce(explosionForce, explosionCenter, explosionRadius,
+            _upwardModifier, ForceMode.Impulse);
     }
 
     private List<Rigidbody> GetExplosionObjects(Vector3 explosionCenter)
