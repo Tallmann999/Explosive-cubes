@@ -10,13 +10,13 @@ public class ExplosionCube : MonoBehaviour
     [SerializeField] private float _sizeForceMultiplier;
     [SerializeField] private float _sizeRadiusMultiplier;
 
-    public void ApplyExplosion(Vector3 explosionCenter, List<Cube> specificCubes)
+    public void ApplyExplosionToRigidbody(Vector3 explosionCenter, List<Cube> specificCubes)
     {
         List<Rigidbody> allAffectedRigidbodies = GetExplosionObjects(explosionCenter);
 
-        foreach (Rigidbody rb in allAffectedRigidbodies)
+        foreach (Rigidbody rigidbody in allAffectedRigidbodies)
         {
-            ApplyExplosionToRigidbody(rb, explosionCenter);
+            ExplosionToRigidbody(rigidbody, explosionCenter);
         }
 
         if (specificCubes != null)
@@ -26,26 +26,43 @@ public class ExplosionCube : MonoBehaviour
                 if (cube != null && cube.Rigidbody != null &&
                     !allAffectedRigidbodies.Contains(cube.Rigidbody))
                 {
-                    ApplyExplosionToRigidbody(cube.Rigidbody, explosionCenter);
+                    ExplosionToRigidbody(cube.Rigidbody, explosionCenter);
                 }
             }
         }
     }
 
-    private void ApplyExplosionToRigidbody(Rigidbody rigidbody, Vector3 explosionCenter)
+    private void ExplosionToRigidbody(Rigidbody rigidbody, Vector3 explosionCenter)
     {
         float startSize = 1f;
-        float distance = Vector3.Distance(explosionCenter, rigidbody.position);
+        Vector3 direction = rigidbody.position - explosionCenter;
+        float sqrDistance = direction.sqrMagnitude;
+        float explosionRadius = _baseRadius * (startSize / rigidbody.transform.localScale.magnitude) * _sizeRadiusMultiplier;
+        float sqrExplosionRadius = explosionRadius * explosionRadius;
+
         float sizeFactor = startSize / rigidbody.transform.localScale.magnitude;
-
         float explosionForce = _baseForce * sizeFactor * _sizeForceMultiplier;
-        float explosionRadius = _baseRadius * sizeFactor * _sizeRadiusMultiplier;
-
+        float distance = Mathf.Sqrt(sqrDistance);
         float distanceFactor = Mathf.Clamp01(1 - (distance / explosionRadius));
         explosionForce *= distanceFactor;
 
         rigidbody.AddExplosionForce(explosionForce, explosionCenter, explosionRadius,
             _upwardModifier, ForceMode.Impulse);
+    }
+
+    public void ApplyExplosionSimple(Vector3 explosionCenter, List<Cube> spawnedObjects)
+    {
+        float minvalue = 0.8f;
+        float maxValue = 1.2f;
+
+        foreach (Cube spawnedObject in spawnedObjects)
+        {
+            if (spawnedObject.Rigidbody != null)
+            {
+                spawnedObject.Rigidbody.AddExplosionForce(_baseForce * Random.Range(minvalue, maxValue),
+                explosionCenter, _baseRadius, _upwardModifier, ForceMode.Impulse);
+            }
+        }
     }
 
     private List<Rigidbody> GetExplosionObjects(Vector3 explosionCenter)

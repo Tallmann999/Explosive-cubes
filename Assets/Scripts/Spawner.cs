@@ -1,14 +1,18 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class Spawner : MonoBehaviour
 {
+    [SerializeField] private float _currentChance;
     [SerializeField] private Cube _prefab;
+
+    public event Action<bool> Separation;
 
     private List<Cube> _spawnedObjects = new List<Cube>();
 
-    public List<Cube> SpawnedObjects => _spawnedObjects;
+    public List<Cube> SpawnedObjects => GetCopyObject();
 
     public void ProcessCubeGeneration(Cube generator)
     {
@@ -17,19 +21,26 @@ public class Spawner : MonoBehaviour
         float maxValue = 1f;
         int percent = 100;
 
-        if (Random.Range(startValue, maxValue) <= generator.CurrentChance)
+        if (Random.Range(startValue, maxValue + 0.1f) <= _currentChance)
         {
             CreateCubes(generator.transform);
-            generator.CurrentChance *= halfValue;
-            Debug.Log($"Разделение получилось: {generator.CurrentChance * percent}%");
+            _currentChance *= halfValue;
+            Separation?.Invoke(true);
+            Debug.Log($"Разделение получилось: {_currentChance * percent}%");
         }
         else
         {
+            Separation?.Invoke(false);
             Debug.Log("Разделение не получилось!!");
         }
 
         Destroy(generator.gameObject);
+    }
 
+    private List<Cube> GetCopyObject()
+    {
+        List<Cube> copyCube = _spawnedObjects;
+        return copyCube;
     }
 
     private void CreateCubes(Transform generatorTransform)
