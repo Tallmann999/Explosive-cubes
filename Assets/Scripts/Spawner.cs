@@ -1,49 +1,28 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class Spawner : MonoBehaviour
 {
-    [SerializeField] private float _currentChance;
     [SerializeField] private Cube _prefab;
 
-    public event Action<bool> Separation;
-
+    private float _currentSplit = 1f;
     private List<Cube> _spawnedObjects = new List<Cube>();
 
     public List<Cube> SpawnedObjects => GetCopyObject();
 
-    public void ProcessCubeGeneration(Cube generator)
+    public void ProcessCubeGeneration(Cube cube)
     {
-        float startValue = 0f;
-        float halfValue = 0.5f;
-        float maxValue = 1f;
-        int percent = 100;
-
-        if (Random.Range(startValue, maxValue + 0.1f) <= _currentChance)
-        {
-            CreateCubes(generator.transform);
-            _currentChance *= halfValue;
-            Separation?.Invoke(true);
-            Debug.Log($"Разделение получилось: {_currentChance * percent}%");
-        }
-        else
-        {
-            Separation?.Invoke(false);
-            Debug.Log("Разделение не получилось!!");
-        }
-
-        Destroy(generator.gameObject);
+        CreateCubes(cube.transform);
+        _currentSplit = cube.CurrentChance;
     }
 
     private List<Cube> GetCopyObject()
     {
-        List<Cube> copyCube = _spawnedObjects;
-        return copyCube;
+        return new List<Cube>(_spawnedObjects);
     }
 
-    private void CreateCubes(Transform generatorTransform)
+    private void CreateCubes(Transform centerTarget)
     {
         float startValue = 0f;
         float halfValue = 0.5f;
@@ -53,7 +32,7 @@ public class Spawner : MonoBehaviour
         int maxValue = 6;
         int count = Random.Range(minValue, maxValue);
 
-        Vector3 center = generatorTransform.position;
+        Vector3 center = centerTarget.position;
         _spawnedObjects.Clear();
 
         for (int i = 0; i < count; i++)
@@ -67,7 +46,7 @@ public class Spawner : MonoBehaviour
 
             if (currentObject != null)
             {
-                currentObject.Initialize(generatorTransform);
+                currentObject.Initialize(centerTarget, _currentSplit);
             }
         }
     }

@@ -1,8 +1,7 @@
-using NUnit.Framework.Constraints;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExplosionCube : MonoBehaviour
+public class Exploder : MonoBehaviour
 {
     [SerializeField] private float _baseForce = 100f;
     [SerializeField] private float _baseRadius = 5f;
@@ -32,6 +31,21 @@ public class ExplosionCube : MonoBehaviour
         }
     }
 
+    public void ApplyExplosionSimple(Vector3 explosionCenter, List<Cube> spawnedObjects)
+    {
+        float minvalue = 0.8f;
+        float maxValue = 1.2f;
+
+        foreach (Cube spawnedObject in spawnedObjects)
+        {
+            if (spawnedObject.Rigidbody != null)
+            {
+                spawnedObject.Rigidbody.AddExplosionForce(_baseForce * Random.Range(minvalue, maxValue),
+                explosionCenter, _baseRadius, _upwardModifier, ForceMode.Impulse);
+            }
+        }
+    }
+
     private void ExplosionToRigidbody(Rigidbody rigidbody, Vector3 explosionCenter)
     {
         float startSize = 1f;
@@ -48,21 +62,6 @@ public class ExplosionCube : MonoBehaviour
 
         rigidbody.AddExplosionForce(explosionForce, explosionCenter, explosionRadius,
             _upwardModifier, ForceMode.Impulse);
-    }
-
-    public void ApplyExplosionSimple(Vector3 explosionCenter, List<Cube> spawnedObjects)
-    {
-        float minvalue = 0.8f;
-        float maxValue = 1.2f;
-
-        foreach (Cube spawnedObject in spawnedObjects)
-        {
-            if (spawnedObject.Rigidbody != null)
-            {
-                spawnedObject.Rigidbody.AddExplosionForce(_baseForce * Random.Range(minvalue, maxValue),
-                explosionCenter, _baseRadius, _upwardModifier, ForceMode.Impulse);
-            }
-        }
     }
 
     private List<Rigidbody> GetExplosionObjects(Vector3 explosionCenter)

@@ -550,6 +550,7 @@ GameObject:
   - component: {fileID: 1331683311}
   - component: {fileID: 1331683310}
   - component: {fileID: 1331683309}
+  - component: {fileID: 1331683315}
   m_Layer: 0
   m_Name: ThirdsObject
   m_TagString: Untagged
@@ -569,7 +570,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 430a3b9a70d2c8645b8218e50395b058, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _currentChance: 1
 --- !u!54 &1331683310
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -686,6 +686,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1331683315
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1331683308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 799b64d029507d3478666edcac91be9a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1352358164
 GameObject:
   m_ObjectHideFlags: 0
@@ -968,6 +980,7 @@ GameObject:
   - component: {fileID: 1900228471}
   - component: {fileID: 1900228475}
   - component: {fileID: 1900228476}
+  - component: {fileID: 1900228477}
   m_Layer: 0
   m_Name: SecondObject
   m_TagString: Untagged
@@ -1103,7 +1116,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 430a3b9a70d2c8645b8218e50395b058, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _currentChance: 1
+--- !u!114 &1900228477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1900228467}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 799b64d029507d3478666edcac91be9a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2012301941
 GameObject:
   m_ObjectHideFlags: 0
@@ -1171,6 +1195,7 @@ GameObject:
   - component: {fileID: 2109999940}
   - component: {fileID: 2109999939}
   - component: {fileID: 2109999938}
+  - component: {fileID: 2109999944}
   m_Layer: 0
   m_Name: ThirdsObject (1)
   m_TagString: Untagged
@@ -1190,7 +1215,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 430a3b9a70d2c8645b8218e50395b058, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _currentChance: 1
 --- !u!54 &2109999939
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1307,6 +1331,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2109999944
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2109999937}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 799b64d029507d3478666edcac91be9a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2115207143
 GameObject:
   m_ObjectHideFlags: 0
@@ -1389,6 +1425,7 @@ GameObject:
   - component: {fileID: 8159665596707570379}
   - component: {fileID: 8856254251140663322}
   - component: {fileID: 8856254251140663326}
+  - component: {fileID: 8856254251140663327}
   m_Layer: 0
   m_Name: FirstObject
   m_TagString: Untagged
@@ -1509,7 +1546,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 430a3b9a70d2c8645b8218e50395b058, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _currentChance: 1
+--- !u!114 &8856254251140663327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5382519002329009719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 799b64d029507d3478666edcac91be9a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

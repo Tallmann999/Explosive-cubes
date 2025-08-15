@@ -12,15 +12,15 @@ public class RaycastHandler : MonoBehaviour
 
     private void OnDisable() => _inputReader.Clicked -= OnPerformRaycast;
 
-    private void OnPerformRaycast()
+    private void OnPerformRaycast(Vector2 screenPosition)
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Ray ray = Camera.main.ScreenPointToRay(screenPosition);
 
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            if (hit.collider.TryGetComponent<Cube>(out var cube))
+            if (hit.collider.TryGetComponent(out Cube resource))
             {
-                HitDetected?.Invoke(cube);
+                HitDetected?.Invoke(resource);
             }
         }
     }
